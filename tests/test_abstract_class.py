@@ -1,0 +1,7 @@
+import pytest
+
+from src.llm.base import LLMProvider
+
+def test_llm_provider_cannot_bbe_instantiated():
+    with pytest.raises(TypeError):
+        LLMProvider()
