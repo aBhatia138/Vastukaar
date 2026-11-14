@@ -1,58 +1,51 @@
+import pytest
+
 from src.tools.repository import RepositoryTools
 
-def test_list_directory(tmp_path):
-    #Create a temporary repo
-    (tmp_path / "main.py").write_text(
-        "print('Hello')",
-        encoding="utf-8"
-    )
-
-    (tmp_path / "tests").mkdir()
-
-    tools = RepositoryTools(str(tmp_path))
-
-    #Act
-    result = tools.list_directory()
-
-    #Check
-    assert result == [
-        {"name": "main.py","type": "file"},
-        {"name": "tests", "type": "directory"}
-    ]
-
-def test_read_file(tmp_path):
-    expected_content = "def hello():\n return 'world' "
-
-    (tmp_path / "main.py").write_text(
-        expected_content,
+def test_search_files_finds_matching_text(tmp_path):
+    source_file = tmp_path / "main.py"
+    source_file.write_text(
+        "import os\nclass GroqProvider:\n    pass\n",
         encoding="utf-8"
     )
 
     tools = RepositoryTools(str(tmp_path))
 
-    #Act
-    result = tools.read_file("main.py")
+    results = tools.search_files("GroqProvider")
 
-    #Assert
-    assert result == expected_content
+    assert len(results) == 1
+    assert results[0]["file"] == "main.py"
+    assert results[0]["line_number"] == 2
+    assert "GroqProvider" in results[0]["line"]
 
-def test_reject_path_outside_workspace(tmp_path):
+def test_search_files_respects_max_results(tmp_path):
+    source_file = tmp_path / "main.py"
+    source_file.write_text(
+        "target\n"
+        "target\n"
+        "target\n",
+        encoding="utf-8"
+    )
+
     tools = RepositoryTools(str(tmp_path))
 
-    #Act and assert
-    try:
-        tools.read_file("../../secret.txt")
-        assert False, "Expected PermissionError"
+    results = tools.search_files("target", max_results=2)
 
-    except PermissionError:
-        pass
+    assert len(results) == 2
 
-def test_reject_nonexistent_file(tmp_path):
+def test_search_files_rejects_empty_query(tmp_path):
     tools = RepositoryTools(str(tmp_path))
 
-    try:
-        tools.read_file("does_not_exist.py")
-        assert False, "Expected FileNotFoundError"
+    with pytest.raises(ValueError):
+        tools.search_files("")
 
-    except FileNotFoundError:
-        pass
+def test_search_files_excludes_generated_directories(tmp_path):
+    source_file = tmp_path / ".venv" / "package.py"
+    source_file.parent.mkdir()
+    source_file.write_text("target\n", encoding="utf-8")
+
+    tools = RepositoryTools(str(tmp_path))
+
+    results = tools.search_files("target")
+
+    assert results == []

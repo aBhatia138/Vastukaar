@@ -116,4 +116,62 @@ class RepositoryTools:
 
         matches = []
 
-        
+        for current_root, directories, filenames in os.walk(
+            search_directory,
+            followlinks=False
+        ):
+            directories[:] = sorted(
+                directory 
+                for directory in directories
+                if directory not in excluded_directories
+            )
+
+            for filename in sorted(filenames):
+
+                candidate = Path(current_root) / filename
+
+                try:
+                    file_path = self._resolve_path(
+                        candidate.relative_to(
+                            self.workspace_root
+                        ).as_posix()
+                    )
+
+                except (PermissionError, FileNotFoundError):
+                    continue
+
+                if not file_path.is_file():
+                    continue
+
+                try:
+                    if file_path.stat().st_size > max_file_size:
+                        continue
+
+                    file_bytes = file_path.read_bytes()
+
+                    if b"\x00" in file_bytes:
+                        continue
+
+                    content = file_bytes.decode("utf-8")
+
+                except (OSError, UnicodeDecodeError):
+                    continue
+
+                for line_number, line in enumerate(
+                    content.splitlines(),
+                    start=1
+                ):
+                    if query in line.casefold():
+
+                        matches.append({
+                            "file": file_path.relative_to(
+                                self.workspace_root
+                            ).as_posix(),
+                            "line_number": line_number,
+                            "line": line.strip()
+                        })
+
+                        if len(matches) >= max_results:
+                            return matches
+
+        return matches
