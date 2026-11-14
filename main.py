@@ -18,15 +18,20 @@ def main():
         },
         {
             "role": "user",
-            "content": "Explain what an AI agent is in simple terms. "
+            "content": "What is 30% of 800? "
         }
     ]
 
     #Generate a response
-    answer = provider.generate(messages)
+    response = provider.generate(messages)
 
-    print("\nVastukaar response: ")
-    print(answer)
+    if response.content is not None:
+        print(response.content)
+
+    if response.tool_calls:
+        print("\nTool callls requested: ")
+        for tool_call in response.tool_calls:
+            print(tool_call)
 
 if __name__ == "__main__":
     main()

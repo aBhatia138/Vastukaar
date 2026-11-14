@@ -30,18 +30,18 @@ class GroqProvider(LLMProvider):
         tool_calls = []
 
         if message.tool_calls:
-            for tool_call in tool_calls:
+            for tool_call in message.tool_calls:
                 arguments = json.loads(
                     tool_call.function.arguments
                 )
 
-            tool_calls.append(
-                ToolCall(
-                    id=tool_call.id,
-                    name=tool_call.function.name,
-                    arguments=arguments
+                tool_calls.append(
+                    ToolCall(
+                        id=tool_call.id,
+                        name=tool_call.function.name,
+                        arguments=arguments
+                    )
                 )
-            )
 
         return LLMResponse(
             content=message.content,

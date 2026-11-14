@@ -75,7 +75,7 @@ def test_groq_provider_converts_tool_call_response(mock_groq):
     mock_response = Mock()
     mock_response.choices = [Mock(message=mock_message)]
 
-    mock_client.chat.completions.create.return_vale = mock_response
+    mock_client.chat.completions.create.return_value = mock_response
 
     #Input to our provider 
     messages = [
