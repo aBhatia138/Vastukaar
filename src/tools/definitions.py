@@ -5,7 +5,7 @@ LIST_DIRECTORY_TOOL = {
         "description": (
             "List the files and subdirectories inside "
             "the repository workspace. Use this tool "
-            "to explore the repository strcuture. "
+            "to explore the repository structure. "
         ),
         "parameters": {
             "type": "object",
@@ -25,7 +25,7 @@ LIST_DIRECTORY_TOOL = {
     }
 }
 
-READ_FILES_TOOL = {
+READ_FILE_TOOL = {
     "type": "function",
     "function": {
         "name": "read_file",
@@ -76,7 +76,7 @@ SEARCH_FILES_TOOL = {
                     "type": "string",
                     "description": (
                         "Directory to search, relative to the "
-                        "repository root. Defaults to '.' ."
+                        "repository root. Defaults to '.'."
                     )
                 },
                 "max_results": {
@@ -95,4 +95,8 @@ SEARCH_FILES_TOOL = {
     }
 }
 
-TOOLS = [LIST_DIRECTORY_TOOL, SEARCH_FILES_TOOL, READ_FILES_TOOL]
+TOOLS = [
+    LIST_DIRECTORY_TOOL,
+    READ_FILE_TOOL,
+    SEARCH_FILES_TOOL
+]
