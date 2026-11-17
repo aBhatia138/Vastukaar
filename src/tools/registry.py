@@ -8,7 +8,7 @@ class ToolRegistry:
 
     def __init__(self, repository_tools: RepositoryTools):
         
-        #Map explicitly permitted tool names to their 
+        #Mapping explicitly the permitted tool names to their 
         #corresponding python implementations
         self._tool_functions = {
             "list_directory": repository_tools.list_directory,
