@@ -56,14 +56,10 @@ def test_registry_rejects_unknown_tool(tool_registry: ToolRegistry):
         )
 
 def test_registry_rejects_missing_required_arguments(tool_registry: ToolRegistry):
-    with pytest.raises(ValueError):
-        tool_registry.execute_tool(
-            "read_file",
-            {
-                "relative_path": "README.md",
-                "force": True
-            }
-        )
+    with pytest.raises(ValidationError) as exc_info:
+        tool_registry.execute_tool("read_file", {})
+
+    assert "'relative_path' is a required property" in str(exc_info.value)
 
 def test_registry_rejects_additional_arguments(tool_registry: ToolRegistry):
     with pytest.raises(ValidationError):
