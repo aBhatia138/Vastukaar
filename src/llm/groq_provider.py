@@ -15,7 +15,7 @@ class GroqProvider(LLMProvider):
             "model": self.model,
             "messages": messages,
             "temperature": 0.3,
-            "max_tokens": 500
+            "max_tokens": 1500
         }
 
         if tools is not None:
