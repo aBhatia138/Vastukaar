@@ -48,7 +48,7 @@ def test_groq_provider_generate_response(mock_groq):
         model="openai/gpt-oss-120b",
         messages=messages,
         temperature=0.3,
-        max_tokens=500
+        max_tokens=1500
     )
 
 @patch("src.llm.groq_provider.Groq")
@@ -124,7 +124,7 @@ def test_groq_provider_converts_tool_call_response(mock_groq):
         model="openai/gpt-oss-120b",
         messages=messages,
         temperature=0.3,
-        max_tokens=500,
+        max_tokens=1500,
         tools=tool_defintions
     )
 
