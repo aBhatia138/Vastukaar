@@ -1,6 +1,13 @@
 from dataclasses import dataclass, field
 from enum import Enum
 
+class OrchestrationStatus(str, Enum):
+    COMPLETED = "completed"
+    PARTIAL_FAILURE = "partial_failure"
+    FAILED = "failed"
+    BUDGET_EXHAUSTED = "budget_exhausted"
+    STALLED = "stalled"
+
 class StepStatus(str, Enum):
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
@@ -141,3 +148,60 @@ class TaskPlan:
 
         for step_id in dependencies:
             visit(step_id)
+
+@dataclass
+class OrchestrationResult:
+    goal: str
+    status: OrchestrationStatus
+    plan: TaskPlan
+    execution_history: list[dict] = field(default_factory=list)
+    message: str = ""
+
+    def __post_init__(self):
+        if not isinstance(self.goal, str) or not self.goal.strip():
+            raise ValueError(
+                "goal must be a non-empty string. "
+            )
+
+        if not isinstance(self.status, OrchestrationStatus):
+            raise TypeError(
+                "Status must be an OrchestrationStatus. "
+            )
+
+        if not isinstance(self.plan, TaskPlan):
+            raise TypeError(
+                "plan must be a TaskPlan. "
+            )
+
+        if not isinstance(self.execution_history, list):
+            raise TypeError(
+                "execution_history must be a list. "
+            )
+
+        if not isinstance(self.message, str):
+            raise TypeError(
+                "message must be a string. "
+            )
+
+    @property
+    def failed_steps(self) -> list[PlanStep]:
+        return [
+            step for step in self.plan.steps
+            if step.status == StepStatus.FAILED
+        ]
+
+    @property
+    def blocked_steps(self) -> list[PlanStep]:
+        return [
+            step for step in self.plan.steps
+            if step.status == StepStatus.BLOCKED
+        ]
+
+    @property
+    def completed_steps(self) -> list[PlanStep]:
+        return [
+            step for step in self.plan.steps
+            if step.status == StepStatus.COMPLETED
+        ]
+    
+    

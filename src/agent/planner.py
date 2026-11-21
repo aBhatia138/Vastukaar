@@ -49,7 +49,7 @@ PLAN_SCHEMA = {
         }
     },
     "required": ["goal", "steps"],
-    "addtionalProperties": False
+    "additionalProperties": False
 }
 
 SYSTEM_PROMPT = """
@@ -110,7 +110,7 @@ class Planner:
     def __init__(self, llm_provider: LLMProvider):
         self.llm_provider = llm_provider
 
-    def create_plan(self, user_request: LLMProvider):
+    def create_plan(self, user_request: str):
         if not isinstance(user_request, str) or not user_request.strip():
             raise ValueError(
                 "User request must be a non-empty string. "

@@ -69,6 +69,16 @@ class Agent:
                 tools=TOOLS
             )
 
+            # print(f"\n[DEBUG] Agent iteration: {iteration + 1}")
+            # print(f"[DEBUG] Tool calls: {len(response.tool_calls)}")
+
+            # for tool_call in response.tool_calls:
+            #     print(f"[DEBUG] Requested tool: {tool_call.name}")
+            #     print(f"[DEBUG] Arguments: {tool_call.arguments}")
+
+            # if response.content:
+            #     print(f"[DEBUG] Response: {response.content[:300]}")
+
             # Step 3: Check whether the LLM has finished.
             if not response.tool_calls:
                 return response.content
